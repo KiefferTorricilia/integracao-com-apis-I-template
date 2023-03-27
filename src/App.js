@@ -1,25 +1,47 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect, useState } from "react";
+import AddUsuario from "./Componentes/AddUsuario/AddUsuario";
+import Usuario from "./Componentes/Usuario/Usuario";
+import axios from "axios";
+
+
+
 
 function App() {
+  const [usuarios, setUsuarios] = useState([])
+
+  const pegarTodosOsUsuarios = () => {
+    const headers = {
+      headers: {
+        Authorization: "kieffer-torricilia-barbosa"
+      }
+    }
+
+    const url = "https://us-central1-labenu-apis.cloudfunctions.net/labenusers/users"
+
+    axios.get(url, headers)
+    .then((resposta) => {
+      setUsuarios(resposta.data)})
+    .catch((erro) =>{
+      console.log(erro)})
+  }
+
+  
+
+  useEffect(() => {
+    pegarTodosOsUsuarios()
+  }, [])
+
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    <>
+      <p>Para esta aula usaremos a <a href="https://documenter.getpostman.com/view/7549981/SzfCT5G2#intro" target="_blank" rel="noreferrer">API Labenusers</a></p>
+      <AddUsuario pegarTodosOsUsuarios={pegarTodosOsUsuarios} />
+      {usuarios.map((usuario) => {
+        return <Usuario key={usuario.id} usuario={usuario} id={usuario.id} pegarTodosOsUsuarios={pegarTodosOsUsuarios} />
+      })}
+    </>
+  )
 }
 
 export default App;
+
